@@ -1,12 +1,13 @@
 // Fixed variables
 const canvas = document.querySelector('#myCanvas');
 const ctx = canvas.getContext('2d');
+const body = document.querySelector('body');
 const paddleWidth = canvas.width / 48;
 const paddleHeight = canvas.height / 3.2;
-const ballRadius = 8;
-const paddleSpeed = 2;
-const ballSpeed = 4;
-const goalScore = 3;
+const ballRadius = 10;
+const paddleSpeed = 5;
+const ballSpeed = 6;
+const goalScore = 10;
 
 // Flexible variables
 let wPressed = false;
@@ -15,8 +16,8 @@ let upPressed = false;
 let downPressed = false;
 let running = true;
 let winner = undefined;
-let leftName = 'Player 1';
-let rightName = 'Player 2';
+let player1Name = 'Player 1';
+let player2Name = 'Player 2';
 
 // Class definitions
 class Paddle {
@@ -71,6 +72,7 @@ class Ball {
   }
 
   update() {
+    // Detect goal
     if (this.x + this.dx > canvas.width - this.radius || this.x + this.dx < this.radius) {
       if (this.x + this.dx > canvas.width - this.radius) {
         leftScoreboard.score++;
@@ -94,15 +96,28 @@ class Ball {
         return;
       }
     }
+
+    // Detect collisions
+    // Collide with top and bottom
     if (this.y + this.dy > canvas.height - this.radius || this.y + this.dy < this.radius) {
       this.dy = -this.dy;
     }
+    // Collide with fronts of paddles
     if (this.x + this.dx - this.radius < leftPaddle.width && this.y + this.dy > leftPaddle.y && this.y + this.dy < leftPaddle.y + leftPaddle.height) {
-      this.dx = -this.dx;
+      if (this.x > leftPaddle.width) {
+        this.dx = -this.dx;
+      } else {
+        this.dy = -this.dy;
+      }
     } else if (this.x + this.dx + this.radius > rightPaddle.x && this.y + this.dy > rightPaddle.y && this.y + this.dy < rightPaddle.y + rightPaddle.height) {
-      this.dx = -this.dx;
+      if (this.x < canvas.width - rightPaddle.width) {
+        this.dx = -this.dx;
+      } else {
+        this.dy = -this.dy;
+      }
     }
     
+    // Increment position
     this.x += this.dx;
     this.y += this.dy;
   }
@@ -152,6 +167,14 @@ function initialize() {
 // Handler for starting game with space bar
 function startWithSpace(e) {
   if (e.key === " ") {
+    const playerInputs = document.querySelectorAll('.player-input');
+    if (playerInputs.length === 2 && playerInputs[0] !== "" && playerInputs[1] !== "") {
+      player1Name = playerInputs[0].value;
+      player2Name = playerInputs[1].value;
+    }
+    for (let i of playerInputs) {
+      i.remove();
+    }
     running = true;
     initialize();
     gameLoop();
@@ -161,12 +184,23 @@ function startWithSpace(e) {
 // Start screen
 function startScreen() {
   let fontSize = 30;
+  const input1 = document.createElement('input');
+  input1.setAttribute('id', 'player-1-input');
+  input1.setAttribute('class', 'player-input');
+  body.appendChild(input1);
+  const input2 = document.createElement('input');
+  input2.setAttribute('id', 'player-2-input');
+  input2.setAttribute('class', 'player-input');
+  body.appendChild(input2);
+
   ctx.fillStyle = 'hsla(0, 0%, 80%, .8)';
   ctx.textAlign = 'center';
   ctx.font = `${fontSize}px serif`;
   ctx.fillText('Pong', canvas.width / 2, canvas.height / 2 - fontSize * 1.5);
+  ctx.textAlign = 'right';
   ctx.fillText('Player 1:', canvas.width / 2, canvas.height / 2 - fontSize * .5);
-  ctx.fillText('Player 2:', canvas.width / 2, canvas.height / 2 + fontSize * .5)
+  ctx.fillText('Player 2:', canvas.width / 2, canvas.height / 2 + fontSize * .5);
+  ctx.textAlign = 'center';
   ctx.fillText('Press spacebar to start game', canvas.width / 2, canvas.height / 2 + fontSize * 1.5);
 
   canvas.addEventListener('keydown', startWithSpace, {once:true});
@@ -186,18 +220,21 @@ function displayWinner() {
   ctx.fillStyle = 'black';
   ctx.textAlign = 'center';
   ctx.fillText(`${winner} wins!`, canvas.width / 2, canvas.height / 2);
+  ctx.font = '16pt serif';
+  ctx.fillText('(press spacebar for rematch)', canvas.width / 2, canvas.height / 2 + 30);
+  
+  window.addEventListener('keydown', startWithSpace, {once:true});
 }
 
 // End the game
 function endGame() {
   running = false;
   if (leftScoreboard.score >= goalScore) {
-    winner = leftName;
+    winner = player1Name;
   } else {
-    winner = rightName;
+    winner = player2Name;
   }
   displayWinner();
-  canvas.addEventListener('keydown', startWithSpace, {once:true});
 }
 
 // Draw all game objects

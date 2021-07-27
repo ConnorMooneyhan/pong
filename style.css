@@ -23,4 +23,21 @@ body {
 #myCanvas {
   background: black;
 }
+
+.player-input {
+  position: absolute;
+  left: calc(50vw + 10px);
+  background-color: rgba(255, 255, 255, 0);
+  color: #cccccc;
+  border: none;
+  border-bottom: 1px solid #999999;
+}
+
+#player-1-input {
+  top: calc(50vh - 33px);
+}
+
+#player-2-input {
+  top: calc(50vh - 3px);
+}
 /*# sourceMappingURL=style.css.map */
