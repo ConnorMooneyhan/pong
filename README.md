@@ -1,2 +1,2 @@
 # Pong
-This is a simple pong game I made using the Canvas API with pure Javascript. 
+This is a simple implementation of Pong I made using the Canvas API with pure Javascript. 
