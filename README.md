@@ -1,7 +1,7 @@
 # Pong
 This is a simple implementation of Pong I made using the Canvas API with pure Javascript. 
 # Coming Soon
-* Retro arcade background
+* Option to go back to start screen and pick new players on game end
 * Settings menu including the following variables:
   * Ball speed
   * Paddle speed
