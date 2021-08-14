@@ -8,7 +8,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: gray;
+  background: linear-gradient(to bottom, hsl(300, 100%, 20%), hsl(300, 100%, 15%));
 }
 
 #myCanvas { 

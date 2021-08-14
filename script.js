@@ -7,7 +7,7 @@ const paddleHeight = canvas.height / 3.2;
 const ballRadius = 10;
 const paddleSpeed = 5;
 const ballSpeed = 6;
-const goalScore = 10;
+const goalScore = 11;
 
 // Flexible variables
 let wPressed = false;
@@ -18,6 +18,7 @@ let running = true;
 let winner = undefined;
 let player1Name = 'Player 1';
 let player2Name = 'Player 2';
+let onStartScreen = true;
 
 // Class definitions
 class Paddle {
@@ -156,6 +157,7 @@ const ball1 = new Ball();
 const leftScoreboard = new Scoreboard(18, 29);
 const rightScoreboard = new Scoreboard(canvas.width - 18, 29);
 
+// Initialize game elements
 function initialize() {
   leftPaddle.initialize();
   rightPaddle.initialize();
@@ -167,17 +169,27 @@ function initialize() {
 // Handler for starting game with space bar
 function startWithSpace(e) {
   if (e.key === " ") {
-    const playerInputs = document.querySelectorAll('.player-input');
-    if (playerInputs.length === 2 && playerInputs[0] !== "" && playerInputs[1] !== "") {
-      player1Name = playerInputs[0].value;
-      player2Name = playerInputs[1].value;
-    }
-    for (let i of playerInputs) {
-      i.remove();
+    if (onStartScreen) {
+      const playerInputs = document.querySelectorAll('.player-input');
+      if (playerInputs[0].value !== "") {
+        player1Name = playerInputs[0].value;
+      }
+      if (playerInputs[1].value !== "") {
+        player2Name = playerInputs[1].value;
+      }
+      for (let i of playerInputs) {
+        i.remove();
+      }
     }
     running = true;
+    onStartScreen = false;
     initialize();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    draw();
     gameLoop();
+  } else {
+    window.addEventListener('keydown', startWithSpace, {once:true});
+    return;
   }
 }
 
@@ -193,6 +205,8 @@ function startScreen() {
   input2.setAttribute('class', 'player-input');
   body.appendChild(input2);
 
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   ctx.fillStyle = 'hsla(0, 0%, 80%, .8)';
   ctx.textAlign = 'center';
   ctx.font = `${fontSize}px serif`;
@@ -203,7 +217,7 @@ function startScreen() {
   ctx.textAlign = 'center';
   ctx.fillText('Press spacebar to start game', canvas.width / 2, canvas.height / 2 + fontSize * 1.5);
 
-  canvas.addEventListener('keydown', startWithSpace, {once:true});
+  window.addEventListener('keydown', startWithSpace, {once:true});
 }
 
 // Re-assign variables for new game state
@@ -215,6 +229,7 @@ function update() {
 
 // Display winner after game ends
 function displayWinner() {
+  window.addEventListener('keydown', startWithSpace, {once:true});
   ctx.fillStyle = 'hsla(0, 0%, 80%, .8)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = 'black';
@@ -222,8 +237,6 @@ function displayWinner() {
   ctx.fillText(`${winner} wins!`, canvas.width / 2, canvas.height / 2);
   ctx.font = '16pt serif';
   ctx.fillText('(press spacebar for rematch)', canvas.width / 2, canvas.height / 2 + 30);
-  
-  window.addEventListener('keydown', startWithSpace, {once:true});
 }
 
 // End the game
