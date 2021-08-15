@@ -7,3 +7,5 @@ This is a simple implementation of Pong I made using the Canvas API with pure Ja
   * Paddle speed
   * Option for ball to increase speed throughout game
   * Goal score
+* Countdown before game start
+* Instructions including controls and score needed to win before game start
